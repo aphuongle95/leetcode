@@ -37,53 +37,87 @@ import requests
 from bs4 import BeautifulSoup
 from typing import List
 from enum import Enum
+from urllib.parse import urljoin
 
-class CategoryStock():
+### UTILS
+def clean_text(t: str) -> str:
+    return t.lower().strip()
+
+### HTML
+def get_soup(url) -> BeautifulSoup:
+    page = requests.get(url)
+    return BeautifulSoup(page.content, "html.parser")
+
+class CategoryStock:
     # always use lower case
     def __init__(self, category: str, link: str):
-      self.category = category
-      self.link = link
-      self.scrape_articles()
-    
-    def scrape_articles(self):
-      articles: List[str] = self.__getattribute__(self.link)
-      self.articles = articles
-      
-    def _get_articles_from_link(link: str) -> List[str]:
-      articles = []
-      # TODO scrapes articles
-      articles: List[BeautifulSoup] = soup.find_all("article", class_ = "product_pod")
-      return articles
+        self.category = category
+        self.books = []
+        self._scrape_books(link)
+        print(f"{category} {', '.join(self.books)}")
+
+    def _scrape_books(self, link) -> List[str]:
+        """Scrape books of a given page and add to list of books.
+        Find next page button and go to the next page to scrape"""
+        print("Scraping: ", link)
+        
+        soup = get_soup(link)
+        articles: List[BeautifulSoup] = soup.find_all(
+            "article", class_="product_pod")
+        books: List[str] = []
+        for a in articles:
+            if a.name == "article":
+                book = a.find("h3").find("title")
+                if book is not None :
+                    book = clean_text(book)
+                    books.append(book)
+        self.books += books
+        next_button = soup.find("li", class_="next") 
+        if next_button is not None:
+            href = next_button.find("a", href=True)["href"]
+            next_link = urljoin(link, href)
+            self._scrape_books(next_link)
 
 class InvalidInput(Exception):
     pass
 
 class ExceptionType(str, Enum):
     WRONGTOPIC = "Wrong topic name"
-    
-def in_stock(title: str, topic: str) -> bool:
-    url = "http://books.toscrape.com/"
-    page = requests.get(url)
-    soup: BeautifulSoup = BeautifulSoup(page.content, "html.parser")
-    # get all categories' stock
-    stocks: List[CategoryStock] = get_all_categories_stock(soup)
-    categories: List[str] = [s.category for s in stocks]
-    if topic.lower not in categories:
-      raise ValueError(ExceptionType.WRONGTOPIC)
-    else:
-      ind = index(topic, categories)
-      if title.lower() in stocks[ind].articles:
-        return(f"{title} is available in {topic}")
-      else:
-        return(f"{title} is not available in {topic}")
-    
-def get_all_categories_stock(soup) -> List[CategoryStock]:
-    nav: BeautifulSoup = soup.find("ul", class_ = "nav nav-list")
+
+
+def get_all_categories_stock(soup: BeautifulSoup, page: str) -> List[CategoryStock]:
+    nav: BeautifulSoup = soup.find("ul", class_="nav nav-list")
     stocks = []
-    for item in nav.find_all("li"):
-        a = item.find('a', href=True)
-        link = a['href']
-        name = a.text
-        category_stock: CategoryStock = CategoryStock(name, link)
-        stocks.append(category_stock)
+    for item in nav.find("ul").find_all("li"):
+        a = item.find("a", href=True) 
+        href = a["href"]
+        category_name = clean_text(a.text)
+        is_valid_category = category_name != ""
+        if is_valid_category:
+            link = urljoin(page, href)
+            category_stock: CategoryStock = CategoryStock(category_name, link)
+            stocks.append(category_stock)
     return stocks
+
+
+def in_stock(title: str, topic: str) -> bool:
+    topic = clean_text(topic)
+    title = clean_text(title)
+    
+    url = "http://books.toscrape.com/"
+    soup: BeautifulSoup = get_soup(url)
+    # get all categories' stock
+    stocks: List[CategoryStock] = get_all_categories_stock(soup, page=url)
+    categories: List[str] = [s.category for s in stocks]
+    if topic not in categories:
+        raise ValueError(ExceptionType.WRONGTOPIC)
+    else:
+        ind = categories.index(topic)
+        return title in stocks[ind].books
+
+
+if __name__ == "__main__":
+    in_stock("A Light in the Attic", "Poetry")
+    in_stock("the origin of species", "science")
+    in_stock("the origin of species", "art")
+    in_stock("Origin of Species", "Science")
