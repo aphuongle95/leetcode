@@ -16,41 +16,58 @@ from typing import Tuple, List
 from enum import Enum
 import math
 
+
 class WrongFormatException(Exception):
-  pass
+    pass
+
 
 class ErrorMessage(str, Enum):
-  GENERAL = "Please input the resistor value in format `{value} ohms` . "
-  TOO_MANY_SPACE = "Input string has too many spaces."
-  NOT_ENOUGH_INFORMATION = "Input string is too short."
-  WRONG_UNIT = "Unit should be ohms."
-  CANT_HANDLE_NUMBER = "We only support value as interger or with abbreviations like k (for thousand) or M (for million) "
- 
-class Colors(str, Enum):
-  BLACK = "black"	
-  BROWN = "brown"	
-  RED = "red"	
-  ORANGE = "orange"	
-  YELLOW = "yellow"
-  GREEN = "green"	
-  BLUE = "blue"	
-  VIOLET = "violet"	
-  GRAY = "gray"	
-  WHITE = "white"
-  GOLD = "gold"
+    GENERAL = "Please input the resistor value in format `{value} ohms` . "
+    TOO_MANY_SPACE = "Input string has too many spaces."
+    NOT_ENOUGH_INFORMATION = "Input string is too short."
+    WRONG_UNIT = "Unit should be ohms."
+    CANT_HANDLE_NUMBER = "We only support value as interger or with abbreviations like k (for thousand) or M (for million) "
 
-ColorCodes = [Colors.BLACK, Colors.BROWN, Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.GREEN, Colors.BLUE, Colors.VIOLET, Colors.GRAY, Colors.WHITE]
+
+class Colors(str, Enum):
+    BLACK = "black"
+    BROWN = "brown"
+    RED = "red"
+    ORANGE = "orange"
+    YELLOW = "yellow"
+    GREEN = "green"
+    BLUE = "blue"
+    VIOLET = "violet"
+    GRAY = "gray"
+    WHITE = "white"
+    GOLD = "gold"
+
+
+ColorCodes = [
+    Colors.BLACK,
+    Colors.BROWN,
+    Colors.RED,
+    Colors.ORANGE,
+    Colors.YELLOW,
+    Colors.GREEN,
+    Colors.BLUE,
+    Colors.VIOLET,
+    Colors.GRAY,
+    Colors.WHITE,
+]
+
 
 def encode_resistor_colors(ohms_string: str) -> str:
     print("Input Str: ", ohms_string)
     v, u = split_str(ohms_string)
-    codes: List[int] = convert_number_to_code(v) 
+    codes: List[int] = convert_number_to_code(v)
     results: List[str] = []
     for c in codes:
         results.append(ColorCodes[c])
     results.append(Colors.GOLD)
     return " ".join(results)
     pass
+
 
 def convert_number_to_code(v: int) -> List[int]:
     n3 = find_pow(v)
@@ -64,33 +81,38 @@ def convert_number_to_code(v: int) -> List[int]:
     print("codes: ", r)
     return r
 
+
 def find_pow(v: int) -> int:
     r = math.floor(math.log10(v)) - 1
     print("Pow value: ", r)
     return r
-  
+
+
 def get_number_from_str(x: str) -> int:
-    if x[-1] == 'k':
-        x = float(x.replace('k', '')) * 1000
-    elif x[-1] == 'M':
-        x = float(x.replace('M', '')) * 1000000
+    if x[-1] == "k":
+        x = float(x.replace("k", "")) * 1000
+    elif x[-1] == "M":
+        x = float(x.replace("M", "")) * 1000000
     return int(x)
-          
+
+
 def split_str(inp: str) -> Tuple[float, str]:
     strs = inp.split(" ")
     if len(strs) > 2:
-      raise WrongFormatException(ErrorMessage.GENERAL + ErrorMessage.TOO_MANY_SPACE)
+        raise WrongFormatException(ErrorMessage.GENERAL + ErrorMessage.TOO_MANY_SPACE)
     if len(strs) < 2:
-      raise WrongFormatException(ErrorMessage.GENERAL + ErrorMessage.NOT_ENOUGH_INFORMATION)
+        raise WrongFormatException(
+            ErrorMessage.GENERAL + ErrorMessage.NOT_ENOUGH_INFORMATION
+        )
     unit = strs[1]
     if unit != "ohms":
-      raise WrongFormatException(ErrorMessage.GENERAL + ErrorMessage.WRONG_UNIT)
+        raise WrongFormatException(ErrorMessage.GENERAL + ErrorMessage.WRONG_UNIT)
     x = strs[0]
     try:
-      val: int = get_number_from_str(x)
+        val: int = get_number_from_str(x)
     except ValueError:
-      raise WrongFormatException(ErrorMessage.GENERAL + ErrorMessage.CANT_HANDLE_NUMBER)
+        raise WrongFormatException(
+            ErrorMessage.GENERAL + ErrorMessage.CANT_HANDLE_NUMBER
+        )
     print("Splitted str: ", (val, unit))
     return (val, unit)
-    
-    

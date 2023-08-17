@@ -8,34 +8,37 @@
 def array_packing(integers: list[int]) -> int:
     packed_bits_str: str = ""
     for i in integers:
-      sanity_check(i)
-      b = convert_to_bits(i)
-      packed_bits_str = str(b) + packed_bits_str
+        sanity_check(i)
+        b = convert_to_bits(i)
+        packed_bits_str = str(b) + packed_bits_str
     print("combined number: ", packed_bits_str)
     result = int(packed_bits_str, 2)
     print("final number: ", result)
     return result
 
+
 def sanity_check(i: int):
     """Check if the given integer is within range"""
-    if i<0 or i>256:
+    if i < 0 or i > 256:
         raise ValueError
     return
-  
-def fill_bits(b: str, n: int=8) -> str:
+
+
+def fill_bits(b: str, n: int = 8) -> str:
     """Fill the missing most important bits with zero.
     Args:
       b: the original bit string
       n: number of bits for output bit
     Returns:
-      str: the bit string filled with 0 for the left most bits, 
+      str: the bit string filled with 0 for the left most bits,
     Examples:
       >>> print(fill_bits("11000"))
       00011000
     """
-    r = "0"*(8-len(b)) + b
+    r = "0" * (8 - len(b)) + b
     return r
-  
+
+
 def convert_to_bits(n: int, b: int = 2, number_bits: int = 8) -> str:
     """Convert an integer into a binary number with certain number of bits
     Args:
@@ -51,8 +54,8 @@ def convert_to_bits(n: int, b: int = 2, number_bits: int = 8) -> str:
     print("integer number: ", n)
     r = ""
     while n:
-      r = str(int(n%b)) + r
-      n //= b
-    r = fill_bits(r, n = number_bits)
+        r = str(int(n % b)) + r
+        n //= b
+    r = fill_bits(r, n=number_bits)
     print("binary number: ", r)
     return r
