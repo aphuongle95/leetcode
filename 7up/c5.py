@@ -33,6 +33,7 @@
 
 # in_stock("Origin of Species", "Science")
 # should return false, because "Origin of Species" does not match the actual title, "The Origin of Species".
+import unittest
 import requests
 from bs4 import BeautifulSoup
 from typing import List
@@ -67,8 +68,9 @@ class CategoryStock:
         books: List[str] = []
         for a in articles:
             if a.name == "article":
-                book = a.find("h3").find("title")
-                if book is not None :
+                h3 = a.find("h3")
+                if h3 is not None :
+                    book = h3.find("a")["title"]
                     book = clean_text(book)
                     books.append(book)
         self.books += books
@@ -99,16 +101,16 @@ def get_all_categories_stock(soup: BeautifulSoup, page: str) -> List[CategorySto
             stocks.append(category_stock)
     return stocks
 
-
+url = "http://books.toscrape.com/"
+soup: BeautifulSoup = get_soup(url)
+# get all categories' stock
+stocks: List[CategoryStock] = get_all_categories_stock(soup, page=url)
+categories: List[str] = [s.category for s in stocks]
+    
 def in_stock(title: str, topic: str) -> bool:
     topic = clean_text(topic)
     title = clean_text(title)
-    
-    url = "http://books.toscrape.com/"
-    soup: BeautifulSoup = get_soup(url)
-    # get all categories' stock
-    stocks: List[CategoryStock] = get_all_categories_stock(soup, page=url)
-    categories: List[str] = [s.category for s in stocks]
+
     if topic not in categories:
         raise ValueError(ExceptionType.WRONGTOPIC)
     else:
@@ -116,8 +118,25 @@ def in_stock(title: str, topic: str) -> bool:
         return title in stocks[ind].books
 
 
+# in_stock("the origin of species", "science")
+# should return true; this title is available in the specified topic. Take note of the case-insensitive search.
+
+# On the other hand, a call to
+
+# in_stock("the origin of species", "art")
+# should return false, because no such title exists in the Art category.
+
+# Lastly, a search for
+
+# in_stock("Origin of Species", "Science")
+# should return false
+
+class TestSolution(unittest.TestCase):
+    def test_instock(self):
+        self.assertEqual(in_stock("A Light in the Attic", "Poetry"), True)
+        self.assertEqual(in_stock("the origin of species", "science"), True)
+        self.assertEqual(in_stock("the origin of species", "art"), False)
+        self.assertEqual(in_stock("Origin of Species", "Science"), False)
+
 if __name__ == "__main__":
-    in_stock("A Light in the Attic", "Poetry")
-    in_stock("the origin of species", "science")
-    in_stock("the origin of species", "art")
-    in_stock("Origin of Species", "Science")
+    unittest.main()
