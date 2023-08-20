@@ -13,49 +13,52 @@ New strategy:
 Iterate through the list
 Check if the price is CONTINUOUSLY increasing or decreasing.
 As soon as the pattern changes (decrease > increase or increase > decrease), sell or buy"""
-    
+
 from typing import List
 import numpy as np
+import unittest
 
 class Solution:
     def diff(self, prices: List[int]) -> List[int]:
         diff = np.array(prices[1:]) - np.array(prices[:-1])
         return diff.tolist()
-        
-    def searchNextSell(self, prices:List[int]) -> int:
+
+    def searchNextSell(self, prices: List[int]) -> int:
         if len(prices) == 1:
             return 0
         diff = self.diff(prices)
         for i in range(len(diff)):
             if diff[i] < 0:
-                return i                 
+                return i
         return 0
 
-    def searchNextBuy(self, prices:List[int]) -> int:
+    def searchNextBuy(self, prices: List[int]) -> int:
 
         diff = self.diff(prices)
         for i in range(len(diff)):
             if diff[i] > 0:
-                return i                 
+                return i
         return -1
-    
+
     def maxProfit(self, prices: List[int]) -> int:
-        
+
         profit = 0
-        
+
         nextBuy = self.searchNextBuy(prices)
         if nextBuy == -1:
             return 0
-            
-        nextSell = self.searchNextSell(prices[nextBuy+1:]) + nextBuy+1
+
+        nextSell = self.searchNextSell(prices[nextBuy + 1 :]) + nextBuy + 1
         profit += prices[nextSell] - prices[nextBuy]
-        profit += self.maxProfit(prices[nextSell:]) 
+        profit += self.maxProfit(prices[nextSell:])
 
         return profit
-                    
-            
-s =  Solution()
-prices = [7,1,5,3,6,4]
-prices = [1,2,3,4,5]
-prices = [7,6,4,3,1]
-print(s.maxProfit(prices))
+
+class Test(unittest.TestCase):
+    def test_by_stock(self):
+        self.assertEqual(Solution().maxProfit([7, 1, 5, 3, 6, 4]), 7)
+        self.assertEqual(Solution().maxProfit([1, 2, 3, 4, 5]), 4)
+        self.assertEqual(Solution().maxProfit([7, 6, 4, 3, 1]), 0)
+
+if __name__ == "__main__":
+    unittest.main()

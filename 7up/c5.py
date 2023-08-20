@@ -33,6 +33,7 @@
 
 # in_stock("Origin of Species", "Science")
 # should return false, because "Origin of Species" does not match the actual title, "The Origin of Species".
+
 import unittest
 import requests
 from bs4 import BeautifulSoup
@@ -117,19 +118,6 @@ def in_stock(title: str, topic: str) -> bool:
         ind = categories.index(topic)
         return title in stocks[ind].books
 
-
-# in_stock("the origin of species", "science")
-# should return true; this title is available in the specified topic. Take note of the case-insensitive search.
-
-# On the other hand, a call to
-
-# in_stock("the origin of species", "art")
-# should return false, because no such title exists in the Art category.
-
-# Lastly, a search for
-
-# in_stock("Origin of Species", "Science")
-# should return false
 
 class TestSolution(unittest.TestCase):
     def test_instock(self):

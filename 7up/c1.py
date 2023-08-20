@@ -1,6 +1,7 @@
 # Write a function that returns the minimum number of breaks needed to split a bar of "n x m" size, into "1 x 1" squares.
 
 import math
+import unittest
 
 
 def break_chocolate(n, m):
@@ -32,3 +33,15 @@ def break_chocolate(n, m):
 
     print(f"min break for {m}, {n} is {min_breaks}")
     return min_breaks
+
+
+class Test(unittest.TestCase):
+    def test_break_chocolate(self):
+        self.assertEqual(break_chocolate(5, 5), 24)
+        self.assertEqual(break_chocolate(7, 4), 27)
+        self.assertEqual(break_chocolate(1, 1), 0)
+        self.assertEqual(break_chocolate(0, 0), 0)
+        self.assertEqual(break_chocolate(6, 1), 5)
+
+if __name__ == "__main__":
+    unittest.main()
