@@ -18,6 +18,7 @@ from typing import List
 import numpy as np
 import unittest
 
+
 class Solution:
     def diff(self, prices: List[int]) -> List[int]:
         diff = np.array(prices[1:]) - np.array(prices[:-1])
@@ -54,11 +55,13 @@ class Solution:
 
         return profit
 
+
 class Test(unittest.TestCase):
     def test_by_stock(self):
         self.assertEqual(Solution().maxProfit([7, 1, 5, 3, 6, 4]), 7)
         self.assertEqual(Solution().maxProfit([1, 2, 3, 4, 5]), 4)
         self.assertEqual(Solution().maxProfit([7, 6, 4, 3, 1]), 0)
+
 
 if __name__ == "__main__":
     unittest.main()
