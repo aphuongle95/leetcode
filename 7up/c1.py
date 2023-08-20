@@ -43,5 +43,6 @@ class Test(unittest.TestCase):
         self.assertEqual(break_chocolate(0, 0), 0)
         self.assertEqual(break_chocolate(6, 1), 5)
 
+
 if __name__ == "__main__":
     unittest.main()

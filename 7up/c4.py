@@ -23,13 +23,15 @@
 from typing import List
 import unittest
 
+
 class Solution:
     """The requirement only asks to return the time it takes to finish the job at index.
-    An easy way to do it is find those jobs that are smaller than this job, 
+    An easy way to do it is find those jobs that are smaller than this job,
     and simply sum up the times taken by smaller jobs and this ones.
     But it is like cheating, as it doesn't show how the shortest job first algorithm works.
     For this reason, I implement `getOrder` function to get the order of the jobs
     """
+
     def get_order(self, tasks: List[int]) -> List[int]:
         """Get order of the jobs processed
 
@@ -40,12 +42,12 @@ class Solution:
             List[int]: order of the jobs to be processed by index
         """
         return sorted(range(len(tasks)), key=lambda k: tasks[k])
-    
+
     def SJF(self, jobs: List[int], index: 0) -> int:
         """Get the time taken from beginning tills the job at index is finished
 
         Args:
-            jobs (List[int]): list of time taken by jobs in the queue 
+            jobs (List[int]): list of time taken by jobs in the queue
             index (0): the index of the job that needs to be processed
 
         Returns:
@@ -58,14 +60,15 @@ class Solution:
             if ind == index:
                 break
         return time_taken
-        
+
 
 class Test(unittest.TestCase):
     def test_get_order(self):
         self.assertEqual(Solution().get_order([2, 3, 1, 4, 5, 3]), [2, 0, 1, 5, 3, 4])
-        
+
     def test_SJF(self):
         self.assertEqual(Solution().SJF([3, 10, 20, 1, 2], 0), 6)
+
 
 if __name__ == "__main__":
     unittest.main()

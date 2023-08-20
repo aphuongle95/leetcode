@@ -117,21 +117,27 @@ def split_str(inp: str) -> Tuple[float, str]:
     print("Splitted str: ", (val, unit))
     return (val, unit)
 
+
 class Test(unittest.TestCase):
     def test_encode_resistor_colors(self):
         self.assertEqual(encode_resistor_colors("10 ohms"), "brown black black gold")
         self.assertEqual(encode_resistor_colors("100 ohms"), "brown black brown gold")
         self.assertEqual(encode_resistor_colors("220 ohms"), "red red brown gold")
-        self.assertEqual(encode_resistor_colors("330 ohms"),"orange orange brown gold")
+        self.assertEqual(encode_resistor_colors("330 ohms"), "orange orange brown gold")
         self.assertEqual(encode_resistor_colors("470 ohms"), "yellow violet brown gold")
         self.assertEqual(encode_resistor_colors("680 ohms"), "blue gray brown gold")
         self.assertEqual(encode_resistor_colors("1k ohms"), "brown black red gold")
         self.assertEqual(encode_resistor_colors("10k ohms"), "brown black orange gold")
         self.assertEqual(encode_resistor_colors("22k ohms"), "red red orange gold")
-        self.assertEqual(encode_resistor_colors("47k ohms"), "yellow violet orange gold")
+        self.assertEqual(
+            encode_resistor_colors("47k ohms"), "yellow violet orange gold"
+        )
         self.assertEqual(encode_resistor_colors("100k ohms"), "brown black yellow gold")
-        self.assertEqual(encode_resistor_colors("330k ohms"), "orange orange yellow gold")
+        self.assertEqual(
+            encode_resistor_colors("330k ohms"), "orange orange yellow gold"
+        )
         self.assertEqual(encode_resistor_colors("2M ohms"), "red black green gold")
+
 
 if __name__ == "__main__":
     unittest.main()

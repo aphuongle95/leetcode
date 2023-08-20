@@ -63,33 +63,36 @@ def convert_to_bits(n: int, b: int = 2, number_bits: int = 8) -> str:
     print("binary number: ", r)
     return r
 
+
 def array_packing_one_liner(integers: list[int], base=2, num_digits=8) -> int:
-  """Array packing based on observation that when a number is shifted to the left by x digits,
-  it's value is multiplied by that base ^ x.
+    """Array packing based on observation that when a number is shifted to the left by x digits,
+    it's value is multiplied by that base ^ x.
 
-  Args:
-      integers (list[int]): list of integers to pack
+    Args:
+        integers (list[int]): list of integers to pack
 
-  Returns:
-      int: the packed integer
-  """
-  multiply_factor = base ** num_digits
-  return sum([num *  multiply_factor ** i for i, num in enumerate(integers)])
+    Returns:
+        int: the packed integer
+    """
+    multiply_factor = base**num_digits
+    return sum([num * multiply_factor**i for i, num in enumerate(integers)])
+
 
 class Test(unittest.TestCase):
     def test_array_packing(self):
-        self.assertEqual(array_packing([24, 85, 0]) , 21784)
-        self.assertEqual(array_packing([23, 45, 39]) , 2567447)
-        self.assertEqual(array_packing([1, 1]) , 257)
-        self.assertEqual(array_packing([0]) , 0)
-        self.assertEqual(array_packing([255, 255, 255, 255]) , 4294967295)
-      
+        self.assertEqual(array_packing([24, 85, 0]), 21784)
+        self.assertEqual(array_packing([23, 45, 39]), 2567447)
+        self.assertEqual(array_packing([1, 1]), 257)
+        self.assertEqual(array_packing([0]), 0)
+        self.assertEqual(array_packing([255, 255, 255, 255]), 4294967295)
+
     def test_array_packing_one_liner(self):
-        self.assertEqual(array_packing_one_liner([24, 85, 0]) , 21784)
-        self.assertEqual(array_packing_one_liner([23, 45, 39]) , 2567447)
-        self.assertEqual(array_packing_one_liner([1, 1]) , 257)
-        self.assertEqual(array_packing_one_liner([0]) , 0)
-        self.assertEqual(array_packing_one_liner([255, 255, 255, 255]) , 4294967295)
+        self.assertEqual(array_packing_one_liner([24, 85, 0]), 21784)
+        self.assertEqual(array_packing_one_liner([23, 45, 39]), 2567447)
+        self.assertEqual(array_packing_one_liner([1, 1]), 257)
+        self.assertEqual(array_packing_one_liner([0]), 0)
+        self.assertEqual(array_packing_one_liner([255, 255, 255, 255]), 4294967295)
+
 
 if __name__ == "__main__":
     unittest.main()
