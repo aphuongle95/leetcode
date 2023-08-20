@@ -66,7 +66,6 @@ def encode_resistor_colors(ohms_string: str) -> str:
         results.append(ColorCodes[c])
     results.append(Colors.GOLD)
     return " ".join(results)
-    pass
 
 
 def convert_number_to_code(v: int) -> List[int]:
