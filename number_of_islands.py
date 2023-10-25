@@ -39,6 +39,8 @@ import unittest
 
 class Solution:
     def numIslands(self, grid: List[List[str]]) -> int:
+        if not grid:
+            return 0
         visited = set() # all the visited elements 
         num_rows = len(grid)
         num_cols = len(grid[0])
