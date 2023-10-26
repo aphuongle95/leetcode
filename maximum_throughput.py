@@ -32,12 +32,18 @@ def check_scalable(throughput: List[int], scaling_cost: List[int], budget: int, 
     return False
 
 def getMaximumThroughput(throughput: List[int], scaling_cost: List[int], budget: int):
+    """Solution:
+    Assume a service yield the lower boundary for maximum throughput,
+    search for this service and check whether it exceeds the maximum throughput
+    Time complexity: O(n*budget/min(scaling_cost))
+    """
     n = len(throughput) # number of services
     max_throughput = 0
     indexes_decreasing = np.argsort(throughput)[::-1]
     throughput = [throughput[i] for i in indexes_decreasing]
     scaling_cost = [scaling_cost[i] for i in indexes_decreasing]
-    
+    print(throughput)
+    print(scaling_cost)
     # assume service at index i is the ones which give the min throughput, 
     # check what's the max scale can be
     for i in range(n):
