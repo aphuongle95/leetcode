@@ -47,11 +47,12 @@ def getMaximumThroughput(throughput: List[int], scaling_cost: List[int], budget:
         for scale_i in reversed(range(max_scale_i+1)):
             budget_left = budget - scale_i*scaling_cost[i]
             min_throughput = (scale_i+1)*throughput[i]
+            curr_throuhgput = throughput[i] * (scale_i + 1) 
+            if curr_throuhgput <= max_throughput: 
+                continue
             can_scale = check_scalable(throughput_others, scaling_cost_others, budget_left, min_throughput, n)
             if can_scale:
-                curr_throuhgput = throughput[i] * (scale_i + 1)    
-                if curr_throuhgput > max_throughput:
-                    max_throughput = curr_throuhgput
+                max_throughput = curr_throuhgput
     return max_throughput
 
 class Test(unittest.TestCase):
