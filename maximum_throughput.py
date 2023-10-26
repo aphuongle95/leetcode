@@ -34,6 +34,9 @@ def check_scalable(throughput: List[int], scaling_cost: List[int], budget: int, 
 def getMaximumThroughput(throughput: List[int], scaling_cost: List[int], budget: int):
     n = len(throughput) # number of services
     max_throughput = 0
+    indexes_decreasing = np.argsort(throughput)[::-1]
+    throughput = [throughput[i] for i in indexes_decreasing]
+    scaling_cost = [scaling_cost[i] for i in indexes_decreasing]
     
     # assume service at index i is the ones which give the min throughput, 
     # check what's the max scale can be
@@ -44,15 +47,21 @@ def getMaximumThroughput(throughput: List[int], scaling_cost: List[int], budget:
         scaling_cost_others = scaling_cost.copy()
         scaling_cost_others.pop(i)
         can_scale = False
+        can_skip = True
         for scale_i in reversed(range(max_scale_i+1)):
+            curr_throughput = throughput[i] * (scale_i + 1) 
+            if curr_throughput <= max_throughput: 
+                can_skip = True
+                break # it makes no sense to continue searching
+            
             budget_left = budget - scale_i*scaling_cost[i]
             min_throughput = (scale_i+1)*throughput[i]
-            curr_throuhgput = throughput[i] * (scale_i + 1) 
-            if curr_throuhgput <= max_throughput: 
-                continue
+            
             can_scale = check_scalable(throughput_others, scaling_cost_others, budget_left, min_throughput, n)
             if can_scale:
-                max_throughput = curr_throuhgput
+                max_throughput = curr_throughput
+        if can_skip:
+            continue
     return max_throughput
 
 class Test(unittest.TestCase):
