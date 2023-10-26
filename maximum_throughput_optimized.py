@@ -22,7 +22,7 @@ import numpy as np
 
 max_scales = []
 
-def check_scalable(throughput: List[int], scaling_cost: List[int], budget: int, min_throughput: int, n: int):
+def check_scalable(throughput: List[int], scaling_cost: List[int], budget: int, min_throughput: float):
     # check if we could scale other services so that it's throughputs are at least the min_throughput
     # only need to find the minimum scale for each service so that it's throughput exceed the minimum ones
     scales = []
@@ -40,21 +40,17 @@ def getMaximumThroughput(throughput: List[int], scaling_cost: List[int], budget:
     Assume a number to be the maximum throughput,
     use binary search on a range to find a better throughput
     """
+    n = len(throughput)
     low = min(throughput)
     high = math.ceil(budget) / min(scaling_cost) * max(throughput)
-    while low < high:
-        mid = math.floor(low + high) / 2
+    while low < high - 1:
+        mid = (low + high) / 2
         if check_scalable(throughput, scaling_cost, budget, mid):
-            low = mid
+            low = math.floor(mid)
         else:
-            high = mid
+            high = math.ceil(mid)
             
-    return min(np.dot(max_scales, throughput))
-
-"""Improving solution:
-using binary search
-the minimum throughput
-"""
+    return min([(max_scales[i] + 1) * throughput[i] for i in range(n)])
  
 class Test(unittest.TestCase):
     def test_get_maximum_throughput(self):
