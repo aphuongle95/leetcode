@@ -29,31 +29,37 @@ def check_scalable(throughput: List[int], scaling_cost: List[int], budget: int, 
     
     if np.dot(scales, scaling_cost) <= budget:
         return True
+    return False
 
 def getMaximumThroughput(throughput: List[int], scaling_cost: List[int], budget: int):
     n = len(throughput) # number of services
-    # sort the arrays so that the service with smaller throughput comes first
-    indexes = np.argsort(throughput)
-    throughput = np.array(throughput)[indexes]
-    scaling_cost = np.array(scaling_cost)[indexes]
+    max_throughput = 0
     
-    max_scale_for_biggest_service = math.floor(budget/scaling_cost[0])
-    throughput_others = throughput[1:]
-    scaling_cost_others = scaling_cost[1:]
-    can_scale = False
-    for scale_for_biggest_service in reversed(range(max_scale_for_biggest_service+1)):
-        budget_left = budget - scale_for_biggest_service*scaling_cost[0]
-        min_throughput = (scale_for_biggest_service+1)*throughput[0]
-        can_scale = check_scalable(throughput_others, scaling_cost_others, budget_left, min_throughput, n)
-        if can_scale:
-            return throughput[0] * (scale_for_biggest_service + 1)    
-            
+    # assume service at index i is the ones which give the min throughput, 
+    # check what's the max scale can be
+    for i in range(n):
+        max_scale_i = math.floor(budget/scaling_cost[i])
+        throughput_others = throughput.copy()
+        throughput_others.pop(i)
+        scaling_cost_others = scaling_cost.copy()
+        scaling_cost_others.pop(i)
+        can_scale = False
+        for scale_i in reversed(range(max_scale_i+1)):
+            budget_left = budget - scale_i*scaling_cost[i]
+            min_throughput = (scale_i+1)*throughput[i]
+            can_scale = check_scalable(throughput_others, scaling_cost_others, budget_left, min_throughput, n)
+            if can_scale:
+                curr_throuhgput = throughput[i] * (scale_i + 1)    
+                if curr_throuhgput > max_throughput:
+                    max_throughput = curr_throuhgput
+    return max_throughput
 
 class Test(unittest.TestCase):
     def test_get_maximum_throughput(self):
         self.assertEqual(getMaximumThroughput(throughput=[3,2,5],scaling_cost=[2,5,10],budget=28), 6)
         self.assertEqual(getMaximumThroughput(throughput=[7,3,4,6],scaling_cost=[2,5,4,3],budget=25), 9)
         self.assertEqual(getMaximumThroughput(throughput=[4,2,7],scaling_cost=[3,5,6],budget=32), 10) 
+        self.assertEqual(getMaximumThroughput(throughput=[6,42,17,11,47,20,34],scaling_cost=[6,43,39,47,27,58,31],budget=289), 34) 
         
 if __name__ == '__main__':
     unittest.main()
